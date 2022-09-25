@@ -1,0 +1,13 @@
+---
+- name: define storage pools
+  raw: "virsh pool-define /etc/libvirt/storage/{{ item.name }}.xml"
+  loop: "{{ hostvars[inventory_hostname].libvirt_zfs_storage }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: start storage pools
+  raw: "virsh pool-start {{ item.name }}"
+  loop: "{{ hostvars[inventory_hostname].libvirt_zfs_storage }}"
+  loop_control:
+    label: "{{ item.name }}"
+

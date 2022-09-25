@@ -1,0 +1,16 @@
+#!/bin/sh
+# NOTE: ~/.tgrc should have TOKEN and CHAT_ID declared
+if [ -f ~/.tgrc ]; then
+    . ~/.tgrc
+else
+    if [ -f /etc/tgrc ]; then
+        . /etc/tgrc
+    else
+        echo "Can't get the Telegram TOKEN, sorry!" 1>&2
+        exit 2
+    fi
+fi
+
+TEXT="$(cat -)"
+
+curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT}" -d parse_mode="markdown" | jq

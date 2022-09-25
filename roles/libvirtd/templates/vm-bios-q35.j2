@@ -1,0 +1,64 @@
+<domain type="kvm">
+  <name>{{ item.name }}</name>
+  <memory unit="MiB">{{ item.memory }}</memory>
+  <currentMemory unit="MiB">{{ item.memory }}</currentMemory>
+  <vcpu>{{ item.vcpu }}</vcpu>
+  <os>
+    <type arch="x86_64" machine="q35">hvm</type>
+    <boot dev="hd"/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <vmport state="off"/>
+  </features>
+  <cpu mode="host-passthrough">
+    <topology sockets="1" dies="1" cores="{{ item.vcpu }}" threads="1"/>
+  </cpu>
+  <clock offset="utc">
+    <timer name="rtc" tickpolicy="catchup"/>
+    <timer name="pit" tickpolicy="delay"/>
+    <timer name="hpet" present="no"/>
+  </clock>
+  <pm>
+    <suspend-to-mem enabled="no"/>
+    <suspend-to-disk enabled="no"/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+{% for disk in item.disks %}
+    <disk type="block" device="disk">
+      <driver name="qemu" type="{{ disk.type }}" cache="none" discard="ignore" io="native"/>
+      <source dev="/dev/zvol/{{ disk.pool }}/{{ disk.name }}"/>
+      <target dev="{{ disk.target_dev }}" bus="virtio"/>
+    </disk>
+{% endfor %}
+    <controller type="usb" model="ich9-ehci1"/>
+    <controller type="usb" model="ich9-uhci1">
+      <master startport="0"/>
+    </controller>
+    <controller type="usb" model="ich9-uhci2">
+      <master startport="2"/>
+    </controller>
+    <controller type="usb" model="ich9-uhci3">
+      <master startport="4"/>
+    </controller>
+    <interface type="direct">
+      <source dev="cluster" mode="bridge"/>
+      <mac address="{{ item.interface_mac }}"/>
+      <model type="virtio"/>
+    </interface>
+    <console type="pty"/>
+    <channel type="spicevmc">
+      <target type="virtio" name="com.redhat.spice.0"/>
+    </channel>
+    <input type="tablet" bus="usb"/>
+    <graphics type="spice" port="-1" tlsPort="-1" autoport="yes"/>
+    <sound model="ich6"/>
+    <video>
+      <model type="qxl"/>
+    </video>
+    <redirdev bus="usb" type="spicevmc"/>
+    <redirdev bus="usb" type="spicevmc"/>
+  </devices>
+</domain>

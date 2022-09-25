@@ -1,0 +1,18 @@
+---
+#/usr/local/etc/libvirt/storage/
+- name: ensure zfs storage enabled and started
+  when:
+    - libvirt_zfs_storage is defined
+  block:
+    - name: stat storage definitions on node
+      stat:
+        path: "/etc/libvirt/storage/{{ item.name }}.xml"
+      loop: "{{ hostvars[inventory_hostname].libvirt_zfs_storage }}"
+      loop_control:
+        label: "{{ item.name }}"
+      register: pool_definitions
+    - name: ensure non-existing storage definitions placed
+      include_tasks: zfs.yml
+      with_nested:
+        - "{{ hostvars[inventory_hostname].libvirt_zfs_storage }}"
+        - "{{ pool_definitions.results }}"

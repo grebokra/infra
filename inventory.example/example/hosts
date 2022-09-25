@@ -1,0 +1,10 @@
+---
+instances:
+  hosts:
+    instance01:
+      ansible_host: 10.0.0.5
+
+all:
+  children:
+    instances:
+

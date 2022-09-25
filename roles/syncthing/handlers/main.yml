@@ -1,0 +1,10 @@
+---
+- name: "systemd daemon-reload"
+  systemd:
+    daemon_reload: true
+
+- name: "syncthing service restart"
+  systemd:
+    name: "syncthing@{{ syncthing_user }}.service"
+    state: restarted
+

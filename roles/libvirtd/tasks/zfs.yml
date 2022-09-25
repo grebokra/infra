@@ -1,0 +1,23 @@
+---
+- name: ensure storage definition placed
+  template:
+    src: storage-zfs.j2
+    dest: "/etc/libvirt/storage/{{ item.0.name }}.xml"
+    owner: root
+    group: wheel
+    mode: 0600
+  notify:
+    - define storage pools
+    - start storage pools
+  when: not item.1.stat.exists
+
+- name: ensure pool added to autostart
+  when:
+    - item.0.autostart
+  file:
+    src: "/etc/libvirt/storage/{{ item.0.name }}.xml"
+    dest: "/etc/libvirt/storage/autostart/{{ item.0.name }}.xml"
+    owner: root
+    group: wheel
+    mode: 0600
+    state: link

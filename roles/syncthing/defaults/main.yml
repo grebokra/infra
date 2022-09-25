@@ -1,0 +1,6 @@
+---
+syncthing_user: syncthing
+syncthing_service_unit_url: 'http://stash.website.cloud.croc.ru/software/syncthing/syncthing-linux-amd64-v1.27.4/etc/linux-systemd-my/system/syncthing@.service'
+syncthing_bin_url: 'http://stash.website.cloud.croc.ru/software/syncthing/syncthing-linux-amd64-v1.27.4/syncthing'
+syncthing_upgrade: false
+

@@ -1,0 +1,6 @@
+---
+- name: include pools.yml
+  include_tasks: pools.yml
+- name: include vms.yml
+  include_tasks: vms.yml
+

@@ -1,0 +1,4 @@
+---
+- git+https://github.com/grebokra/ansible-role-wireguard
+- git+https://github.com/grebokra/ansible-role-gitea
+- git+https://github.com/grebokra/i3-based-desktop

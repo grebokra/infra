@@ -1,0 +1,59 @@
+---
+- name: install syncthing
+  block:
+    - name: check if syncthing binary is present
+      stat:
+        path: /usr/local/bin/syncthing
+      register: syncthing_bin
+    - name: ensure syncthing binary is placed
+      when:
+        not syncthing_bin.stat.exists or syncthing_upgrade
+      get_url:
+        url: "{{ syncthing_bin_url }}"
+        dest: /usr/local/bin/syncthing
+        owner: root
+        group: root
+        mode: '0755'
+
+- name: create and enable syncthing service
+  block:
+    - name: check if syncthing service unit is present
+      stat:
+        path: '/etc/systemd/system/syncthing@.service'
+      register: syncthing_service_unit
+    - name: ensure syncthing service unit is placed
+      when:
+        not syncthing_service_unit.stat.exists or syncthing_upgrade
+      get_url:
+        url: "{{ syncthing_service_unit_url }}" 
+        dest: '/etc/systemd/system/syncthing@.service'
+        owner: root
+        group: root
+        mode: '0600'
+      notify: 'systemd daemon-reload'
+    - name: ensure syncthing group exists
+      group:
+        name: syncthing
+        state: present
+        gid: 50001
+    - name: ensure syncthing user exists
+      user:
+        name: syncthing
+        group: syncthing
+        uid: 50001
+        shell: /usr/sbin/nologin
+        password: '!'
+        create_home: false
+        home: /srv/syncthing
+    - name: ensure syncthing directory exists
+      file:
+        name: /srv/syncthing
+        state: directory
+        owner: syncthing
+        group: syncthing
+        mode: '0770'
+    - name: ensure syncthing service is enabled
+      systemd:
+        name: "syncthing@{{ syncthing_user }}.service"
+        enabled: yes
+

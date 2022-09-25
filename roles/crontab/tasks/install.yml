@@ -1,0 +1,28 @@
+---
+- name: Prepare crontab service (Gentoo)
+  when:
+    - ansible_distribution == "Gentoo"
+  block:
+    - name: Ensure required packages are installed
+      portage:
+        package: cronie
+        state: present
+    - name: Enable cronie service
+      systemd:
+        name: cronie.service
+        state: started
+        enabled: yes
+
+- name: Prepare crontab service (SUSE)
+  when:
+    - ansible_distribution is search("SUSE")
+  block:
+    - name: Ensure required packages are installed
+      zypper:
+        name: cronie
+        state: present
+    - name: Enable cronie service
+      systemd:
+        name: cron.service
+        state: started
+        enabled: yes

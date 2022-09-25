@@ -1,0 +1,21 @@
+---
+ansible_user: user
+roles:
+  - gitea
+
+gitea_upgrade: no
+gitea_dependences:
+  - git
+  - sqlite
+gitea_root_url: https://gitea.example.com/
+gitea_protocol: http
+gitea_domain: gitea.example.com
+gitea_http_port: 80
+gitea_ssh_domain: gitea.gitea.example.com
+gitea_ssh_port: 22
+gitea_db_type: sqlite3
+gitea_db_host: localhost:3306
+gitea_db_name: root
+gitea_db_user: gitea
+gitea_db_password: giteasecret
+gitea_install_lock: true

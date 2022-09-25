@@ -1,0 +1,24 @@
+---
+- name: install and enable libvirtd service
+  when:
+    - ansible_distribution is search("SUSE")
+  block:
+    - name: ensure home:gmelnikov repo added and refreshed
+      zypper_repository:
+        repo: "https://download.opensuse.org/repositories/home:/gmelnikov/openSUSE_Tumbleweed/home:gmelnikov.repo"
+        name: "home:gmelnikov"
+        state: present
+        runrefresh: true
+        priority: 90
+        auto_import_keys: true
+
+    - name: ensure required packages installed
+      zypper:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - libvirt
+          - libvirt-daemon
+          - libvirt-daemon-qemu
+          - libvirt-daemon-driver-storage-zfs

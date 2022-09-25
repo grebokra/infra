@@ -1,0 +1,18 @@
+---
+- block:
+    - name: ensure tools directrory present
+      ansible.builtin.file:
+        path: /opt/tools
+        state: directory
+        mode: 0755
+        owner: root
+        group: wheel
+
+    - name: ensure tools placed
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "/opt/tools/{{ item }}"
+        mode: 0755
+        owner: root
+        group: wheel
+      loop: "{{ hostvars[inventory_hostname].tools }}"

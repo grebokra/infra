@@ -1,0 +1,9 @@
+#!/bin/sh
+/sbin/zpool list | grep -v NAME | cut -f1 -d' ' | while read pool; do [ ! -f "/tmp/${pool}_scrub" ] && /sbin/zpool scrub -w "$pool"; rm -f "/tmp/${pool}_scrub"; done
+
+echo From: \`"$(hostname)"\`
+echo "Scrub completed on $(date)"
+echo "Current status:"
+echo \`\`\`
+/sbin/zpool status
+echo \`\`\`

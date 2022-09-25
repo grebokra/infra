@@ -1,0 +1,45 @@
+---
+- name: include install.yml
+  include_tasks: install.yml
+
+- name: ensure local etc directory present
+  ansible.builtin.file:
+    path: "/usr/local/etc/systemd/system"
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- name: ensure service units are placed
+  template:
+    src: docker-service.service.j2
+    dest: "/usr/local/etc/systemd/system/docker-{{ item.name }}.service"
+    owner: root
+    group: root
+    mode: 0664
+  loop: "{{ hostvars[inventory_hostname].containers }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - hostvars[inventory_hostname].containers is defined
+  notify: daemon-reload
+
+- name: ensure service units are enabled
+  systemd:
+    name: "/usr/local/etc/systemd/system/docker-{{ item.name }}.service"
+    enabled: yes
+  loop: "{{ hostvars[inventory_hostname].containers }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - hostvars[inventory_hostname].containers is defined
+
+- name: ensure services started
+  systemd:
+    name: "docker-{{ item.name }}.service"
+    state: started
+  loop: "{{ hostvars[inventory_hostname].containers }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - hostvars[inventory_hostname].containers is defined

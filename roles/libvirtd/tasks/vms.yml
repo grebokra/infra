@@ -1,0 +1,21 @@
+---
+- name: ensure bios vms defined
+  community.libvirt.virt:
+    command: define
+    xml: "{{ lookup('template', 'vm-bios-q35.j2') }}"
+  when:
+    - libvirt_bios_vms is defined
+  loop: "{{ hostvars[inventory_hostname].libvirt_bios_vms }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: ensure uefi vms defined
+  community.libvirt.virt:
+    command: define
+    xml: "{{ lookup('template', 'vm-uefi-q35.j2') }}"
+  when:
+    - libvirt_uefi_vms is defined
+  loop: "{{ hostvars[inventory_hostname].libvirt_uefi_vms }}"
+  loop_control:
+    label: "{{ item.name }}"
+

@@ -1,0 +1,5 @@
+vars/
+roles/ansible-role-*
+roles/i3-based-desktop/
+inventory/
+-inventory/example

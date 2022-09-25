@@ -1,0 +1,31 @@
+# Contents of this unit is managed by ansible!
+
+[Unit]
+Description= {{ item.description }}
+{% if not use_podman %}
+After=docker.service
+{% else %}
+After=multi-user.target
+{% endif %}
+Wants=
+{% if not use_podman %}
+Requires=docker.service
+{% endif %}
+
+[Service]
+StartLimitInterval=20
+StartLimitBurst=5
+TimeoutStartSec=0
+Environment="HOME=/root"
+ExecStartPre=-/usr/bin/docker kill {{ item.name }}
+ExecStartPre=-/usr/bin/docker rm -f {{ item.name }}
+
+ExecStart=/usr/bin/docker run \
+	--name {{ item.name }} \
+	{{ item.run_flags }} \
+	{{ item.image }}
+ExecStop=-/usr/bin/docker stop --time=10 {{ item.name }}
+ExecStop=-/usr/bin/docker rm -f {{ item.name }}
+
+[Install]
+WantedBy=multi-user.target

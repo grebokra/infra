@@ -1,0 +1,15 @@
+---
+- name: ensure defined cron jobs scheduled
+  ansible.builtin.cron:
+    name: "{{ item.name }}"
+    minute: "{{ item.minute | default(omit) }}"
+    hour: "{{ item.hour | default(omit) }}"
+    day: "{{ item.day | default(omit) }}"
+    month: "{{ item.month | default(omit) }}"
+    weekday: "{{ item.weekday | default(omit) }}"
+    job: "{{ item.job }}"
+    state: "{{ item.state | default('present') }}"
+    user: "{{ item.user | default('root') }}"
+  loop: "{{ hostvars[inventory_hostname].cron_jobs }}"
+  loop_control:
+    label: "{{ item.name }}"

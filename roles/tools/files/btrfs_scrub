@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo From: \`"$(hostname)"\`
+echo "Scrub completed on $(date)"
+echo "Current status:"
+echo \`\`\`
+/sbin/btrfs scrub start -B "$1"
+echo \`\`\`

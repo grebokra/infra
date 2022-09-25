@@ -1,0 +1,14 @@
+---
+- name: install and configure podman (rhel)
+  when:
+    - ansible_os_family == "RedHat"
+    - use_podman
+  block:
+    - name: Ensure required packages are installed
+      yum:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - podman
+          - podman-docker

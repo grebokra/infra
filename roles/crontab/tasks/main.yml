@@ -1,0 +1,8 @@
+---
+- block:
+    - name: include install.yml
+      include_tasks: install.yml
+    - name: include jobs.yml
+      include_tasks: jobs.yml
+  when:
+    - hostvars[inventory_hostname].cron_jobs is defined

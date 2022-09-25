@@ -1,0 +1,38 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: true
+  tasks:
+  - name: ensure tools present
+    import_role:
+      name: tools
+    when: tools is defined
+  - name: ensure crontab populated
+    import_role:
+      name: crontab
+    when: cron_jobs is defined
+  - name: ensure containers placed
+    import_role:
+      name: docker
+    when: '"docker" in roles'
+  - name: ensure wireguard configured
+    import_role:
+      name: ansible-role-wireguard
+    when: '"wg" in roles'
+  - name: ensure gitea configured
+    import_role:
+      name: ansible-role-gitea
+    when: '"gitea" in roles'
+  - name: ensure libvirtd configured
+    import_role:
+      name: libvirtd
+    when: '"libvirtd" in roles'
+  - name: ensure syncthing configured
+    import_role:
+      name: syncthing
+    when: '"syncthing" in roles'
+  - name: ensure desktop configured
+    import_role:
+      name: i3-based-desktop
+    become: no
+    when: '"workstation" in roles'
